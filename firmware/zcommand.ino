@@ -376,7 +376,7 @@ void ZCommand::setOptionsFromSavedConfig(String configArguments[])
       pinMode(pinRTS, OUTPUT);
   }
   s_pinWrite(pinRTS, rtsActive);
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   serial.setFlowControlType(serial.getFlowControlType());
 #endif
   if (configArguments[CFG_RIPIN].length() > 0)
@@ -657,7 +657,7 @@ ZResult ZCommand::doInfoCommand(int vval, uint8_t *vbuf, int vlen, bool isNumber
   }
   else if (vval == 4)
   {
-    serial.prints(ZIMODEM_VERSION);
+    serial.prints(WIFIMODEM_VERSION);
     serial.prints(EOLN);
   }
   else if (vval == 6)
@@ -1077,13 +1077,13 @@ ZResult ZCommand::doWebDump(const char *filename, const bool cache)
 ZResult ZCommand::doUpdateFirmware(int vval, uint8_t *vbuf, int vlen, bool isNumber)
 {
   serial.prints("Local firmware version ");
-  serial.prints(ZIMODEM_VERSION);
+  serial.prints(WIFIMODEM_VERSION);
   serial.prints(".");
   serial.prints(EOLN);
 
   uint8_t buf[255];
   int bufSize = 254;
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   if ((!doWebGetBytes("www.zimmers.net", 80, "/otherprojs/guru-latest-version.txt", false, buf, &bufSize)) || (bufSize <= 0))
     return ZERROR;
 #else
@@ -1111,7 +1111,7 @@ ZResult ZCommand::doUpdateFirmware(int vval, uint8_t *vbuf, int vlen, bool isNum
     buf[bufSize] = 0;
   }
 
-  if ((strlen(ZIMODEM_VERSION) == bufSize) && memcmp(buf, ZIMODEM_VERSION, strlen(ZIMODEM_VERSION)) == 0)
+  if ((strlen(WIFIMODEM_VERSION) == bufSize) && memcmp(buf, WIFIMODEM_VERSION, strlen(WIFIMODEM_VERSION)) == 0)
   {
     serial.prints("Your modem is up-to-date.");
     serial.prints(EOLN);
@@ -1132,7 +1132,7 @@ ZResult ZCommand::doUpdateFirmware(int vval, uint8_t *vbuf, int vlen, bool isNum
   serial.printf("Updating to %s, wait for modem restart...", buf);
   serial.flush();
   char firmwareName[100];
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   sprintf(firmwareName, "/otherprojs/guru-firmware-%s.bin", buf);
 #else
   sprintf(firmwareName, "/otherprojs/c64net-firmware-%s.bin", buf);
@@ -2480,7 +2480,7 @@ ZResult ZCommand::doSerialCommand()
             case 'h':
               {
                 char filename[50];
-                sprintf(filename, "/c64net-help-%s.txt", ZIMODEM_VERSION);
+                sprintf(filename, "/c64net-help-%s.txt", WIFIMODEM_VERSION);
                 if (vval == 6502)
                 {
                   SPIFFS.remove(filename);
@@ -2688,7 +2688,7 @@ void ZCommand::sendOfficialResponse(ZResult res)
 void ZCommand::showInitMessage()
 {
   serial.prints(commandMode.EOLN);
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   int totalSPIFFSSize = SPIFFS.totalBytes();
 #ifdef INCLUDE_SD_SHELL
   serial.prints("GuruModem WiFi Firmware v");
@@ -2707,20 +2707,20 @@ void ZCommand::showInitMessage()
 #endif
 #endif
   HWSerial.setTimeout(60000);
-  serial.prints(ZIMODEM_VERSION);
+  serial.prints(WIFIMODEM_VERSION);
   //serial.prints(" (");
   //serial.prints(compile_date);
   //serial.prints(")");
   serial.prints(commandMode.EOLN);
   char s[100];
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   sprintf(s, "sdk=%s chipid=%d cpu@%d", ESP.getSdkVersion(), ESP.getChipRevision(), ESP.getCpuFreqMHz());
 #else
   sprintf(s, "sdk=%s chipid=%d cpu@%d", ESP.getSdkVersion(), ESP.getFlashChipId(), ESP.getCpuFreqMHz());
 #endif
   serial.prints(s);
   serial.prints(commandMode.EOLN);
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   sprintf(s, "totsize=%dk hsize=%dk fsize=%dk speed=%dm", (ESP.getFlashChipSize() / 1024), (ESP.getFreeHeap() / 1024), totalSPIFFSSize / 1024, (ESP.getFlashChipSpeed() / 1000000));
 #else
   sprintf(s, "totsize=%dk ssize=%dk fsize=%dk speed=%dm", (ESP.getFlashChipRealSize() / 1024), (ESP.getSketchSize() / 1024), totalSPIFFSSize / 1024, (ESP.getFlashChipSpeed() / 1000000));

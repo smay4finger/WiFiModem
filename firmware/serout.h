@@ -31,7 +31,7 @@ enum FlowControlType
 };
 
 static bool enableRtsCts = true;
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
 #  define SER_BUFSIZE 0x7F
 #else
 #  define SER_BUFSIZE 128

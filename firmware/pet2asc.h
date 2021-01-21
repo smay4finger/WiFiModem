@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
 # include <WiFi.h>
 # define ENC_TYPE_NONE WIFI_AUTH_OPEN
 # include <HardwareSerial.h>

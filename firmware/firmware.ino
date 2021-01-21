@@ -14,31 +14,31 @@
    limitations under the License.
 */
 //#define TCP_SND_BUF                     4 * TCP_MSS
-#define ZIMODEM_VERSION "3.5.6"
+#define WIFIMODEM_VERSION "0.9.6"
 const char compile_date[] = __DATE__ " " __TIME__;
 #define DEFAULT_NO_DELAY true
 #define null 0
 
 #ifdef ARDUINO_ESP32_DEV
-# define ZIMODEM_ESP32
+# define WIFIMODEM_ESP32
 #elif defined(ESP32)
-# define ZIMODEM_ESP32
+# define WIFIMODEM_ESP32
 #elif defined(ARDUINO_ESP320)
-# define ZIMODEM_ESP32
+# define WIFIMODEM_ESP32
 #elif defined(ARDUINO_NANO32)
-# define ZIMODEM_ESP32
+# define WIFIMODEM_ESP32
 #elif defined(ARDUINO_LoLin32)
-# define ZIMODEM_ESP32
+# define WIFIMODEM_ESP32
 #elif defined(ARDUINO_ESPea32)
-# define ZIMODEM_ESP32
+# define WIFIMODEM_ESP32
 #elif defined(ARDUINO_QUANTUM)
-# define ZIMODEM_ESP32
+# define WIFIMODEM_ESP32
 #else
-# define ZIMODEM_ESP8266
+# define WIFIMODEM_ESP8266
 #endif
 
 
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
 # define PIN_FACTORY_RESET GPIO_NUM_0
 # define DEFAULT_PIN_DCD GPIO_NUM_14
 # define DEFAULT_PIN_CTS GPIO_NUM_13
@@ -201,7 +201,7 @@ static int dsrInactive = DEFAULT_DSR_LOW;
 
 static int getDefaultCtsPin()
 {
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   return DEFAULT_PIN_CTS;
 #else
   if ((ESP.getFlashChipRealSize() / 1024) >= 4096) // assume this is a striketerm/esp12e
@@ -225,7 +225,7 @@ static void s_pinWrite(uint8_t pinNo, uint8_t value)
 
 static void setHostName(const char *hname)
 {
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   tcpip_adapter_set_hostname(TCPIP_ADAPTER_IF_STA, hname);
 #else
   WiFi.hostname(hname);
@@ -240,7 +240,7 @@ static bool connectWifi(const char* ssid, const char* password)
     delay(100);
     yield();
   }
-#ifndef ZIMODEM_ESP32
+#ifndef WIFIMODEM_ESP32
   if (hostname.length() > 0)
     setHostName(hostname.c_str());
 #endif
@@ -288,7 +288,7 @@ static void changeBaudRate(int baudRate)
   debugPrintf("Baud change to %d.\n", baudRate);
   dequeSize = 1 + (baudRate / INTERNAL_FLOW_CONTROL_DIV);
   debugPrintf("Deque constant now: %d\n", dequeSize);
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   HWSerial.changeBaudRate(baudRate);
 #else
   HWSerial.begin(baudRate, serialConfig);  //Change baud rate
@@ -302,7 +302,7 @@ static void changeSerialConfig(SerialConfig conf)
   debugPrintf("Config changing %d.\n", (int)conf);
   dequeSize = 1 + (baudRate / INTERNAL_FLOW_CONTROL_DIV);
   debugPrintf("Deque constant now: %d\n", dequeSize);
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   HWSerial.changeConfig(conf);
 #else
   HWSerial.begin(baudRate, conf);  //Change baud rate
@@ -346,7 +346,7 @@ void setup()
 {
   for (int i = 0; i < MAX_PIN_NO; i++)
     pinSupport[i] = false;
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   Serial.begin(115200); //the debug port
   Serial.setDebugOutput(true);
   debugPrintf("Debug port open and ready.\n");
@@ -379,7 +379,7 @@ void setup()
     debugPrintf("SPIFFS Formatted.");
   }
   HWSerial.begin(DEFAULT_BAUD_RATE, DEFAULT_SERIAL_CONFIG);  //Start Serial
-#ifdef ZIMODEM_ESP8266
+#ifdef WIFIMODEM_ESP8266
   HWSerial.setRxBufferSize(1024);
 #endif
   commandMode.loadConfig();
@@ -391,7 +391,7 @@ void setup()
 
 void checkFactoryReset()
 {
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   if (!digitalRead(PIN_FACTORY_RESET))
   {
     if (resetPushTimer != 1)

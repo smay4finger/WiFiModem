@@ -1,5 +1,5 @@
-#ifndef ZIMODEM_PROTO_HTTP
-#define ZIMODEM_PROTO_HTTP
+#ifndef WIFIMODEM_PROTO_HTTP
+#define WIFIMODEM_PROTO_HTTP
 /*
    Copyright 2016-2019 Bo Zimmerman
 

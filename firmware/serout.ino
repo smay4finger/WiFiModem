@@ -26,14 +26,14 @@ static void serialDirectWrite(uint8_t c)
 
 static void hwSerialFlush()
 {
-#ifdef ZIMODEM_ESP8266
+#ifdef WIFIMODEM_ESP8266
   HWSerial.flush();
 #endif
 }
 
 static void serialOutDeque()
 {
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   while ((TBUFhead != TBUFtail)
          && ((SER_BUFSIZE - HWSerial.availableForWrite()) < dequeSize))
 #else
@@ -111,7 +111,7 @@ bool ZSerial::isPetsciiMode()
 void ZSerial::setFlowControlType(FlowControlType type)
 {
   flowControlType = type;
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
   if (flowControlType == FCT_RTSCTS)
   {
     uart_set_hw_flow_ctrl(UART_NUM_2, UART_HW_FLOWCTRL_DISABLE, 0);
@@ -214,7 +214,7 @@ void ZSerial::enqueByte(uint8_t c)
     {
       case FCT_DISABLED:
       case FCT_INVALID:
-#ifndef ZIMODEM_ESP32
+#ifndef WIFIMODEM_ESP32
         if ((HWSerial.availableForWrite() > 0)
             && (HWSerial.available() == 0))
 #endif
@@ -224,7 +224,7 @@ void ZSerial::enqueByte(uint8_t c)
         }
         break;
       case FCT_RTSCTS:
-#ifdef ZIMODEM_ESP32
+#ifdef WIFIMODEM_ESP32
         if (isSerialOut())
 #else
         if ((HWSerial.availableForWrite() >= SER_BUFSIZE) // necessary for esp8266 flow control
