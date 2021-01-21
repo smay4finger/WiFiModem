@@ -68,6 +68,7 @@ const char compile_date[] = __DATE__ " " __TIME__;
 # define HARD_DCD_HIGH 1
 //# define HARD_DCD_LOW 1
 #else  // ESP-8266, e.g. ESP-01, ESP-12E, inverted for C64Net WiFi Modem
+# define PIN_FACTORY_RESET 0
 # define DEFAULT_PIN_DSR 5
 # define DEFAULT_PIN_DTR 4
 # define DEFAULT_PIN_RI 14
@@ -391,7 +392,7 @@ void setup()
 
 void checkFactoryReset()
 {
-#ifdef WIFIMODEM_ESP32
+#ifdef PIN_FACTORY_RESET
   if (!digitalRead(PIN_FACTORY_RESET))
   {
     if (resetPushTimer != 1)
