@@ -1,2 +1,5 @@
 # backup files Eagle
 hardware/*.?#?
+
+# build files by Arduino
+firmware/build
