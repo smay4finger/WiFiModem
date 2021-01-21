@@ -19,13 +19,13 @@ void ZStream::switchTo(WiFiClientNode *conn)
   current = conn;
   currentExpiresTimeMs = 0;
   lastNonPlusTimeMs = 0;
-  plussesInARow=0;
+  plussesInARow = 0;
   serial.setXON(true);
   serial.setPetsciiMode(isPETSCII());
   serial.setFlowControlType(getFlowControl());
-  currMode=&streamMode;
+  currMode = &streamMode;
   checkBaudChange();
-  if(pinSupport[pinDTR])
+  if (pinSupport[pinDTR])
     lastDTR = digitalRead(pinDTR);
 }
 
@@ -71,9 +71,9 @@ void ZStream::serialIncoming()
   bool escRead = false;
   int bytesRead = 0;
   int bytesAvailable = HWSerial.available();
-  if(bytesAvailable == 0)
+  if (bytesAvailable == 0)
     return;
-  while(--bytesAvailable >= 0)
+  while (--bytesAvailable >= 0)
   {
     uint8_t c = HWSerial.read();
     if (c == 27) {
@@ -87,25 +87,23 @@ void ZStream::serialIncoming()
       }
     }
     logSerialIn(c);
-    if((c==commandMode.EC)
-    &&((plussesInARow>0)||((millis()-lastNonPlusTimeMs)>800)))
+    if ((c == commandMode.EC)
+        && ((plussesInARow > 0) || ((millis() - lastNonPlusTimeMs) > 800)))
       plussesInARow++;
-    else
-    if(c!=commandMode.EC)
+    else if (c != commandMode.EC)
     {
-      plussesInARow=0;
-      lastNonPlusTimeMs=millis();
+      plussesInARow = 0;
+      lastNonPlusTimeMs = millis();
     }
-    if((c==19)&&(getFlowControl()==FCT_NORMAL))
+    if ((c == 19) && (getFlowControl() == FCT_NORMAL))
       serial.setXON(false);
-    else
-    if((c==17)&&(getFlowControl()==FCT_NORMAL))
+    else if ((c == 17) && (getFlowControl() == FCT_NORMAL))
       serial.setXON(true);
     else
     {
-      if(isEcho())
+      if (isEcho())
         serial.printb(c);
-      if(isPETSCII())
+      if (isPETSCII())
         c = petToAsc(c);
       buf[bytesRead++] = c;
       if (bytesRead == escSeqBufSize) {
@@ -119,24 +117,23 @@ void ZStream::serialIncoming()
   }
 
   currentExpiresTimeMs = 0;
-  if(plussesInARow==3)
-    currentExpiresTimeMs=millis()+800;
+  if (plussesInARow == 3)
+    currentExpiresTimeMs = millis() + 800;
 }
 
 void ZStream::switchBackToCommandMode(bool logout)
 {
-  if(logout && (current != null) && isDisconnectedOnStreamExit())
+  if (logout && (current != null) && isDisconnectedOnStreamExit())
   {
-    if(!commandMode.suppressResponses)
+    if (!commandMode.suppressResponses)
     {
-      if(commandMode.numericResponses)
+      if (commandMode.numericResponses)
       {
         preEOLN(commandMode.EOLN);
         serial.prints("3");
         serial.prints(commandMode.EOLN);
       }
-      else
-      if(current->isAnswered())
+      else if (current->isAnswered())
       {
         preEOLN(commandMode.EOLN);
         serial.prints("NO CARRIER");
@@ -151,7 +148,7 @@ void ZStream::switchBackToCommandMode(bool logout)
 
 void ZStream::socketWrite(uint8_t* buf, size_t count)
 {
-  if(current->isConnected())
+  if (current->isConnected())
   {
     uint8_t telnetEscapedBuf[count * 2];
     size_t outputCount = 0;
@@ -164,7 +161,7 @@ void ZStream::socketWrite(uint8_t* buf, size_t count)
       telnetEscapedBuf[outputCount++] = buf[i];
     }
     current->write(telnetEscapedBuf, outputCount);
-    nextFlushMs=millis()+250;
+    nextFlushMs = millis() + 250;
     //current->flush(); // rendered safe by available check
     //delay(0);
     //yield();
@@ -174,27 +171,27 @@ void ZStream::socketWrite(uint8_t* buf, size_t count)
 void ZStream::loop()
 {
   WiFiServerNode *serv = servs;
-  while(serv != null)
+  while (serv != null)
   {
-    if(serv->hasClient())
+    if (serv->hasClient())
     {
       WiFiClient newClient = serv->server->available();
-      if(newClient.connected())
+      if (newClient.connected())
       {
-        int port=newClient.localPort();
+        int port = newClient.localPort();
         String remoteIPStr = newClient.remoteIP().toString();
-        const char *remoteIP=remoteIPStr.c_str();
-        bool found=false;
-        WiFiClientNode *c=conns;
-        while(c!=null)
+        const char *remoteIP = remoteIPStr.c_str();
+        bool found = false;
+        WiFiClientNode *c = conns;
+        while (c != null)
         {
-          if((c->isConnected())
-          &&(c->port==port)
-          &&(strcmp(remoteIP,c->host)==0))
-            found=true;
-          c=c->next;
+          if ((c->isConnected())
+              && (c->port == port)
+              && (strcmp(remoteIP, c->host) == 0))
+            found = true;
+          c = c->next;
         }
-        if(!found)
+        if (!found)
         {
           newClient.write(busyMsg.c_str());
           newClient.flush();
@@ -203,15 +200,15 @@ void ZStream::loop()
         }
       }
     }
-    serv=serv->next;
+    serv = serv->next;
   }
-  
+
   WiFiClientNode *conn = conns;
-  unsigned long now=millis();
-  while(conn != null)
+  unsigned long now = millis();
+  while (conn != null)
   {
     WiFiClientNode *nextConn = conn->next;
-    if((!conn->isAnswered())&&(conn->isConnected())&&(conn!=current))
+    if ((!conn->isAnswered()) && (conn->isConnected()) && (conn != current))
     {
       conn->write((uint8_t *)busyMsg.c_str(), busyMsg.length());
       conn->flush();
@@ -220,69 +217,67 @@ void ZStream::loop()
     }
     conn = nextConn;
   }
-  
-  if(pinSupport[pinDTR])
+
+  if (pinSupport[pinDTR])
   {
-    if(lastDTR==dtrActive)
+    if (lastDTR == dtrActive)
     {
       lastDTR = digitalRead(pinDTR);
-      if((lastDTR==dtrInactive)
-      &&(dtrInactive != dtrActive))
+      if ((lastDTR == dtrInactive)
+          && (dtrInactive != dtrActive))
       {
-        if(current != null)
+        if (current != null)
           current->setDisconnectOnStreamExit(true);
         switchBackToCommandMode(true);
       }
     }
     lastDTR = digitalRead(pinDTR);
   }
-  if((current==null)||(!current->isConnected()))
+  if ((current == null) || (!current->isConnected()))
   {
     switchBackToCommandMode(true);
   }
-  else
-  if((currentExpiresTimeMs > 0) && (millis() > currentExpiresTimeMs))
+  else if ((currentExpiresTimeMs > 0) && (millis() > currentExpiresTimeMs))
   {
     currentExpiresTimeMs = 0;
-    if(plussesInARow == 3)
+    if (plussesInARow == 3)
     {
-      plussesInARow=0;
-      if(current != 0)
+      plussesInARow = 0;
+      if (current != 0)
       {
         switchBackToCommandMode(false);
       }
     }
   }
-  else
-  if(serial.isSerialOut())
+  else if (serial.isSerialOut())
   {
-    if(current->available()>0)
-    //&&(current->isConnected()) // not a requirement to have available bytes to read
+    if (current->available() > 0)
+      //&&(current->isConnected()) // not a requirement to have available bytes to read
     {
-      int bufferRemaining=serialOutBufferBytesRemaining();
-      if(bufferRemaining > 0)
+      int bufferRemaining = serialOutBufferBytesRemaining();
+      if (bufferRemaining > 0)
       {
         int bytesAvailable = current->available();
-        if(bytesAvailable > bufferRemaining)
+        if (bytesAvailable > bufferRemaining)
           bytesAvailable = bufferRemaining;
-        if(bytesAvailable>0)
+        if (bytesAvailable > 0)
         {
-          for(int i=0;(i<bytesAvailable) && (current->available()>0);i++)
+          for (int i = 0; (i < bytesAvailable) && (current->available() > 0); i++)
           {
-            if(serial.isSerialCancelled())
+            if (serial.isSerialCancelled())
               break;
-            uint8_t c=current->read();
+            uint8_t c = current->read();
             logSocketIn(c);
-            if((!isTelnet() || handleAsciiIAC((char *)&c,current))
-            && (!isPETSCII() || ascToPet((char *)&c,current)))
+            if ((!isTelnet() || handleAsciiIAC((char *)&c, current))
+                && (!isPETSCII() || ascToPet((char *)&c, current)))
               serial.printb(c);
           }
         }
       }
     }
-    if(serial.isSerialOut())
+    if (serial.isSerialOut())
     {
-      if((nextFlushMs > 0) && (millis() > nextFlushMs))
+      if ((nextFlushMs > 0) && (millis() > nextFlushMs))
       {
         nextFlushMs = 0;
         serial.flush();
@@ -292,4 +287,3 @@ void ZStream::loop()
   }
   checkBaudChange();
 }
-

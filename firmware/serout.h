@@ -22,12 +22,12 @@
 
 enum FlowControlType
 {
-  FCT_RTSCTS=0,
-  FCT_NORMAL=1,
-  FCT_AUTOOFF=2,
-  FCT_MANUAL=3,
-  FCT_DISABLED=4,
-  FCT_INVALID=5
+  FCT_RTSCTS = 0,
+  FCT_NORMAL = 1,
+  FCT_AUTOOFF = 2,
+  FCT_MANUAL = 3,
+  FCT_DISABLED = 4,
+  FCT_INVALID = 5
 };
 
 static bool enableRtsCts = true;
@@ -38,8 +38,8 @@ static bool enableRtsCts = true;
 #endif
 static uint8_t TBUF[SER_WRITE_BUFSIZE];
 static char FBUF[256];
-static int TBUFhead=0;
-static int TBUFtail=0;
+static int TBUFhead = 0;
+static int TBUFtail = 0;
 static int serialDelayMs = 0;
 
 static void serialDirectWrite(uint8_t c);
@@ -51,8 +51,8 @@ class ZSerial : public Stream
 {
   private:
     bool petsciiMode = false;
-    FlowControlType flowControlType=DEFAULT_FCT;
-    bool XON_STATE=true;
+    FlowControlType flowControlType = DEFAULT_FCT;
+    bool XON_STATE = true;
     void enqueByte(uint8_t c);
   public:
     ZSerial();
@@ -66,7 +66,7 @@ class ZSerial : public Stream
     bool isSerialHalted();
     bool isSerialCancelled();
     bool isPacketOut();
-    
+
     void prints(String str);
     void prints(const char *expr);
     void printc(const char c);

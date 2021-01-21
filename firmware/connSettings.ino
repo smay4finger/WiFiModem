@@ -26,12 +26,12 @@ ConnSettings::ConnSettings(int flagBitmap)
 
 ConnSettings::ConnSettings(const char *dmodifiers)
 {
-  petscii=((strchr(dmodifiers,'p')!=null) || (strchr(dmodifiers,'P')!=null));
-  telnet=((strchr(dmodifiers,'t')!=null) || (strchr(dmodifiers,'T')!=null));
-  echo=((strchr(dmodifiers,'e')!=null) || (strchr(dmodifiers,'E')!=null));
-  xonxoff=((strchr(dmodifiers,'x')!=null) || (strchr(dmodifiers,'X')!=null));
-  rtscts=((strchr(dmodifiers,'r')!=null) || (strchr(dmodifiers,'R')!=null));
-  secure=((strchr(dmodifiers,'s')!=null) || (strchr(dmodifiers,'S')!=null));
+  petscii = ((strchr(dmodifiers, 'p') != null) || (strchr(dmodifiers, 'P') != null));
+  telnet = ((strchr(dmodifiers, 't') != null) || (strchr(dmodifiers, 'T') != null));
+  echo = ((strchr(dmodifiers, 'e') != null) || (strchr(dmodifiers, 'E') != null));
+  xonxoff = ((strchr(dmodifiers, 'x') != null) || (strchr(dmodifiers, 'X') != null));
+  rtscts = ((strchr(dmodifiers, 'r') != null) || (strchr(dmodifiers, 'R') != null));
+  secure = ((strchr(dmodifiers, 's') != null) || (strchr(dmodifiers, 'S') != null));
 }
 
 ConnSettings::ConnSettings(String modifiers) : ConnSettings(modifiers.c_str())
@@ -41,17 +41,17 @@ ConnSettings::ConnSettings(String modifiers) : ConnSettings(modifiers.c_str())
 int ConnSettings::getBitmap()
 {
   int flagsBitmap = 0;
-  if(petscii)
+  if (petscii)
     flagsBitmap = flagsBitmap | FLAG_PETSCII;
-  if(telnet)
+  if (telnet)
     flagsBitmap = flagsBitmap | FLAG_TELNET;
-  if(echo)
+  if (echo)
     flagsBitmap = flagsBitmap | FLAG_ECHO;
-  if(xonxoff)
+  if (xonxoff)
     flagsBitmap = flagsBitmap | FLAG_XONXOFF;
-  if(rtscts)
+  if (rtscts)
     flagsBitmap = flagsBitmap | FLAG_RTSCTS;
-  if(secure)
+  if (secure)
     flagsBitmap = flagsBitmap | FLAG_SECURE;
   return flagsBitmap;
 }
@@ -59,20 +59,20 @@ int ConnSettings::getBitmap()
 int ConnSettings::getBitmap(FlowControlType forceCheck)
 {
   int flagsBitmap = getBitmap();
-  if(((flagsBitmap & (FLAG_XONXOFF | FLAG_RTSCTS))==0)
-  &&(forceCheck==FCT_RTSCTS))
+  if (((flagsBitmap & (FLAG_XONXOFF | FLAG_RTSCTS)) == 0)
+      && (forceCheck == FCT_RTSCTS))
     flagsBitmap |= FLAG_RTSCTS;
   return flagsBitmap;
 }
 
 String ConnSettings::getFlagString()
 {
-  String lastOptions =(petscii?"p":"");
-  lastOptions += (petscii?"p":"");
-  lastOptions += (telnet?"t":"");
-  lastOptions += (echo?"e":"");
-  lastOptions += (xonxoff?"x":"");
-  lastOptions += (rtscts?"r":"");
-  lastOptions += (secure?"s":"");
+  String lastOptions = (petscii ? "p" : "");
+  lastOptions += (petscii ? "p" : "");
+  lastOptions += (telnet ? "t" : "");
+  lastOptions += (echo ? "e" : "");
+  lastOptions += (xonxoff ? "x" : "");
+  lastOptions += (rtscts ? "r" : "");
+  lastOptions += (secure ? "s" : "");
   return lastOptions;
 }

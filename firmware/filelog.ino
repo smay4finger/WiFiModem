@@ -27,10 +27,10 @@ static LogMode logMode = NADA;
 static uint8_t FROMHEXDIGIT(uint8_t a1)
 {
   a1 = lc(a1);
-  if((a1 >= '0')&&(a1 <= '9'))
-    return a1-'0';
-  if((a1 >= 'a')&&(a1 <= 'f'))
-    return 10 + (a1-'a');
+  if ((a1 >= '0') && (a1 <= '9'))
+    return a1 - '0';
+  if ((a1 >= 'a') && (a1 <= 'f'))
+    return 10 + (a1 - 'a');
   return 0;
 }
 
@@ -57,29 +57,29 @@ static char *tohex(uint8_t a)
 
 static char *TOHEX(unsigned long a)
 {
-  for(int i=7;i>=0;i--)
+  for (int i = 7; i >= 0; i--)
   {
     HDL[i] = "0123456789ABCDEF"[a & 0x0f];
     a = a >> 4;
   }
   HDL[8] = 0;
-  char *H=HDL;
-  if((strlen(H)>2) && (strstr(H,"00")==H))
-    H+=2;
+  char *H = HDL;
+  if ((strlen(H) > 2) && (strstr(H, "00") == H))
+    H += 2;
   return H;
 }
 
 static char *TOHEX(unsigned int a)
 {
-  for(int i=3;i>=0;i--)
+  for (int i = 3; i >= 0; i--)
   {
     HDL[i] = "0123456789ABCDEF"[a & 0x0f];
     a = a >> 4;
   }
   HDL[4] = 0;
-  char *H=HDL;
-  if((strlen(H)>2) && (strstr(H,"00")==H))
-    H+=2;
+  char *H = HDL;
+  if ((strlen(H) > 2) && (strstr(H, "00") == H))
+    H += 2;
   return H;
 }
 
@@ -95,35 +95,35 @@ static char *TOHEX(long a)
 
 static void logInternalOut(const LogMode m, const uint8_t c)
 {
-  if(logFileOpen)
+  if (logFileOpen)
   {
-    if((m != logMode)
-    ||(++logCurCount > DBG_BYT_CTR)
-    ||((millis()-lastLogTime)>expectedSerialTime))
+    if ((m != logMode)
+        || (++logCurCount > DBG_BYT_CTR)
+        || ((millis() - lastLogTime) > expectedSerialTime))
     {
-      logCurCount=0;
-      
+      logCurCount = 0;
+
       logMode = m;
       rawLogPrintln("");
-      switch(m)
+      switch (m)
       {
-      case NADA:
-        break;
-      case SocketIn:
-        rawLogPrintf("%s SocI: ",TOHEX(millis()-logStartTime));
-        break;
-      case SocketOut:
-        rawLogPrintf("%s SocO: ",TOHEX(millis()-logStartTime));
-        break;
-      case SerialIn:
-        rawLogPrintf("%s SerI: ",TOHEX(millis()-logStartTime));
-        break;
-      case SerialOut:
-        rawLogPrintf("%s SerO: ",TOHEX(millis()-logStartTime));
-        break;
+        case NADA:
+          break;
+        case SocketIn:
+          rawLogPrintf("%s SocI: ", TOHEX(millis() - logStartTime));
+          break;
+        case SocketOut:
+          rawLogPrintf("%s SocO: ", TOHEX(millis() - logStartTime));
+          break;
+        case SerialIn:
+          rawLogPrintf("%s SerI: ", TOHEX(millis() - logStartTime));
+          break;
+        case SerialOut:
+          rawLogPrintf("%s SerO: ", TOHEX(millis() - logStartTime));
+          break;
       }
     }
-    lastLogTime=millis();
+    lastLogTime = millis();
     rawLogPrint(TOHEX(c));
     rawLogPrint(" ");
   }
@@ -131,30 +131,30 @@ static void logInternalOut(const LogMode m, const uint8_t c)
 
 static void logSerialOut(const uint8_t c)
 {
-  logInternalOut(SerialOut,c);
+  logInternalOut(SerialOut, c);
 }
 
 static void logSocketOut(const uint8_t c)
 {
-  logInternalOut(SocketOut,c);
+  logInternalOut(SocketOut, c);
 }
 
 static void logSerialIn(const uint8_t c)
 {
-  logInternalOut(SerialIn,c);
+  logInternalOut(SerialIn, c);
 }
 
 static void logSocketIn(const uint8_t c)
 {
-  logInternalOut(SocketIn,c);
+  logInternalOut(SocketIn, c);
 }
 
 static void logSocketIn(const uint8_t *c, int n)
 {
-  if(logFileOpen)
+  if (logFileOpen)
   {
-    for(int i=0;i<n;i++)
-      logInternalOut(SocketIn,c[i]);
+    for (int i = 0; i < n; i++)
+      logInternalOut(SocketIn, c[i]);
   }
 }
 
@@ -163,15 +163,15 @@ static void rawLogPrintf(const char* format, ...)
   int ret;
   va_list arglist;
   va_start(arglist, format);
-  vsnprintf(FBUF,sizeof(FBUF), format, arglist);
+  vsnprintf(FBUF, sizeof(FBUF), format, arglist);
   rawLogPrint(FBUF);
   va_end(arglist);
-  
+
 }
 
 static void rawLogPrint(const char* str)
 {
-  if(logFileDebug)
+  if (logFileDebug)
     debugPrintf(str);
   else
     logFile.print(str);
@@ -179,7 +179,7 @@ static void rawLogPrint(const char* str)
 
 static void rawLogPrintln(const char* str)
 {
-  if(logFileDebug)
+  if (logFileDebug)
   {
     debugPrintf(str);
     debugPrintf("\n");
@@ -188,11 +188,11 @@ static void rawLogPrintln(const char* str)
     logFile.println(str);
 }
 
-static void logPrintfln(const char* format, ...) 
+static void logPrintfln(const char* format, ...)
 {
-  if(logFileOpen)
+  if (logFileOpen)
   {
-    if(logMode != NADA)
+    if (logMode != NADA)
     {
       rawLogPrintln("");
       logMode = NADA;
@@ -200,17 +200,17 @@ static void logPrintfln(const char* format, ...)
     int ret;
     va_list arglist;
     va_start(arglist, format);
-    vsnprintf(FBUF,sizeof(FBUF), format, arglist);
+    vsnprintf(FBUF, sizeof(FBUF), format, arglist);
     rawLogPrintln(FBUF);
     va_end(arglist);
   }
 }
 
-static void logPrintf(const char* format, ...) 
+static void logPrintf(const char* format, ...)
 {
-  if(logFileOpen)
+  if (logFileOpen)
   {
-    if(logMode != NADA)
+    if (logMode != NADA)
     {
       rawLogPrintln("");
       logMode = NADA;
@@ -226,9 +226,9 @@ static void logPrintf(const char* format, ...)
 
 static void logPrint(const char* msg)
 {
-  if(logFileOpen)
+  if (logFileOpen)
   {
-    if(logMode != NADA)
+    if (logMode != NADA)
     {
       rawLogPrintln("");
       logMode = NADA;
@@ -239,9 +239,9 @@ static void logPrint(const char* msg)
 
 static void logPrintln(const char* msg)
 {
-  if(logFileOpen)
+  if (logFileOpen)
   {
-    if(logMode != NADA)
+    if (logMode != NADA)
     {
       rawLogPrintln("");
       logMode = NADA;
@@ -249,4 +249,3 @@ static void logPrintln(const char* msg)
     rawLogPrintln(msg);
   }
 }
-

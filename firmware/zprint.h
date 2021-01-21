@@ -35,9 +35,9 @@ class ZPrint : public ZMode
     unsigned long nextFlushMs = 0;
     PrintPayloadType payloadType = PETSCII;
     unsigned long lastNonPlusTimeMs = 0;
-    int plussesInARow=0;
-    size_t pdex=0;
-    size_t coldex=0;
+    int plussesInARow = 0;
+    size_t pdex = 0;
+    size_t coldex = 0;
     char pbuf[258];
     ZSerial serial;
     char lastLastC = 0;
@@ -62,4 +62,3 @@ class ZPrint : public ZMode
     void serialIncoming();
     void loop();
 };
-

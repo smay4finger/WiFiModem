@@ -22,7 +22,7 @@
 # include "SD.h"
 # include "SPI.h"
 # include "driver/uart.h"
-  static HardwareSerial HWSerial(UART_NUM_2);
+static HardwareSerial HWSerial(UART_NUM_2);
 #else
 # include "ESP8266WiFi.h"
 # define HWSerial Serial
@@ -37,17 +37,17 @@ bool handleAsciiIAC(char *c, Stream *stream);
 
 static void setCharArray(char **target, const char *src)
 {
-  if(src == NULL)
+  if (src == NULL)
     return;
-  if(*target != NULL)
+  if (*target != NULL)
     free(*target);
-  *target = (char *)malloc(strlen(src)+1);
-  strcpy(*target,src);
+  *target = (char *)malloc(strlen(src) + 1);
+  strcpy(*target, src);
 }
 
 static void freeCharArray(char **arr)
 {
-  if(*arr == NULL)
+  if (*arr == NULL)
     return;
   free(*arr);
   *arr = NULL;
@@ -55,21 +55,20 @@ static void freeCharArray(char **arr)
 
 static int modifierCompare(const char *match1, const char *match2)
 {
-  if(strlen(match1) != strlen(match2))
+  if (strlen(match1) != strlen(match2))
     return -1;
-    
-  for(int i1=0;i1<strlen(match1);i1++)
+
+  for (int i1 = 0; i1 < strlen(match1); i1++)
   {
-    char c1=tolower(match1[i1]);
-    bool found=false;
-    for(int i2=0;i2<strlen(match2);i2++)
+    char c1 = tolower(match1[i1]);
+    bool found = false;
+    for (int i2 = 0; i2 < strlen(match2); i2++)
     {
-      char c2=tolower(match2[i2]);
-      found = found || (c1==c2);
+      char c2 = tolower(match2[i2]);
+      found = found || (c1 == c2);
     }
-    if(!found)
+    if (!found)
       return -1;
   }
   return 0;
 }
-

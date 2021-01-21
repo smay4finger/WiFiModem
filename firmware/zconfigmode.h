@@ -19,19 +19,19 @@ class ZConfig : public ZMode
   private:
     enum ZConfigMenu
     {
-      ZCFGMENU_MAIN=0,
-      ZCFGMENU_NUM=1,
-      ZCFGMENU_ADDRESS=2,
-      ZCFGMENU_OPTIONS=3,
-      ZCFGMENU_WIMENU=4,
-      ZCFGMENU_WIFIPW=5,
-      ZCFGMENU_WICONFIRM=6,
-      ZCFGMENU_FLOW=7,
-      ZCFGMENU_BBSMENU=8,
-      ZCFGMENU_NEWPORT=9,
-      ZCFGMENU_NEWHOST=10
+      ZCFGMENU_MAIN = 0,
+      ZCFGMENU_NUM = 1,
+      ZCFGMENU_ADDRESS = 2,
+      ZCFGMENU_OPTIONS = 3,
+      ZCFGMENU_WIMENU = 4,
+      ZCFGMENU_WIFIPW = 5,
+      ZCFGMENU_WICONFIRM = 6,
+      ZCFGMENU_FLOW = 7,
+      ZCFGMENU_BBSMENU = 8,
+      ZCFGMENU_NEWPORT = 9,
+      ZCFGMENU_NEWHOST = 10
     } currState;
-    
+
     ZSerial serial; // storage for serial settings only
 
     void switchBackToCommandMode();
@@ -45,12 +45,11 @@ class ZConfig : public ZMode
     String lastOptions;
     WiFiServerSpec serverSpec;
     bool newListen;
-    bool settingsChanged=false;
-    int lastNumNetworks=0;
+    bool settingsChanged = false;
+    int lastNumNetworks = 0;
 
   public:
     void switchTo();
     void serialIncoming();
     void loop();
 };
-

@@ -31,4 +31,3 @@ class PhoneBookEntry
     static PhoneBookEntry *findPhonebookEntry(long number);
     static PhoneBookEntry *findPhonebookEntry(String number);
 };
-

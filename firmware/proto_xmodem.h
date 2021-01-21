@@ -15,14 +15,14 @@
 */
 #include <FS.h>
 
-class XModem 
+class XModem
 {
-  typedef enum
-  {
-    Crc,
-    ChkSum  
-  } transfer_t;
-  
+    typedef enum
+    {
+      Crc,
+      ChkSum
+    } transfer_t;
+
   private:
     //holds readed byte (due to dataAvail())
     int byte;
@@ -51,10 +51,10 @@ class XModem
     bool receiveFrames(transfer_t transfer);
     bool sendNack(void);
     void init(void);
-    
+
     bool transmitFrames(transfer_t);
     unsigned char generateChkSum(void);
-    
+
   public:
     static const unsigned char XMO_NACK = 21;
     static const unsigned char XMO_ACK =  6;
@@ -63,13 +63,13 @@ class XModem
     static const unsigned char XMO_EOT =  4;
     static const unsigned char XMO_CAN =  0x18;
 
-    static const int receiveDelay=7000;
+    static const int receiveDelay = 7000;
     static const int rcvRetryLimit = 10;
 
-  
+
     XModem(int (*recvChar)(int), void (*sendChar)(char));
-    XModem(int (*recvChar)(int), void (*sendChar)(char), 
-                bool (*dataHandler)(unsigned long, char*, int));
+    XModem(int (*recvChar)(int), void (*sendChar)(char),
+           bool (*dataHandler)(unsigned long, char*, int));
     bool receive();
     bool transmit();
 };
@@ -79,13 +79,13 @@ static ZSerial xserial;
 
 static int xReceiveSerial(int del)
 {
-  unsigned long end=micros() + (del * 1000L);
-  while(micros() < end)
+  unsigned long end = micros() + (del * 1000L);
+  while (micros() < end)
   {
     serialOutDeque();
-    if(xserial.available() > 0)
+    if (xserial.available() > 0)
     {
-      int c=xserial.read();
+      int c = xserial.read();
       logSerialIn(c);
       return c;
     }
@@ -102,26 +102,26 @@ static void xSendSerial(char c)
 
 static bool xUDataHandler(unsigned long number, char *buf, int sz)
 {
-  for(int i=0;i<sz;i++)
+  for (int i = 0; i < sz; i++)
     xfile->write((uint8_t)buf[i]);
   return true;
 }
 
 static bool xDDataHandler(unsigned long number, char *buf, int sz)
 {
-  for(int i=0;i<sz;i++)
+  for (int i = 0; i < sz; i++)
   {
-    int c=xfile->read();
-    if(c<0)
+    int c = xfile->read();
+    if (c < 0)
     {
-      if(i==0)
+      if (i == 0)
         return false;
       buf[i] = (char)26;
     }
     else
       buf[i] = (char)c;
   }
-  return true;  
+  return true;
 }
 
 static boolean xDownload(File &f, String &errors)
@@ -147,9 +147,8 @@ static boolean xUpload(File &f, String &errors)
 static void initXSerial(FlowControlType commandFlow)
 {
   xserial.setFlowControlType(FCT_DISABLED);
-  if(commandFlow==FCT_RTSCTS)
+  if (commandFlow == FCT_RTSCTS)
     xserial.setFlowControlType(FCT_RTSCTS);
   xserial.setPetsciiMode(false);
   xserial.setXON(true);
 }
-

@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-const int MAX_COMMAND_SIZE=256;
+const int MAX_COMMAND_SIZE = 256;
 #define ZI_STATE_MACHINE_LEN 7
 #define DEFAULT_TERMTYPE "Zimodem"
 
@@ -30,63 +30,63 @@ enum ZResult
 
 enum ConfigOptions
 {
-  CFG_WIFISSI=0,
-  CFG_WIFIPW=1,
-  CFG_BAUDRATE=2,
-  CFG_EOLN=3,
-  CFG_FLOWCONTROL=4,
-  CFG_ECHO=5,
-  CFG_RESP_SUPP=6,
-  CFG_RESP_NUM=7,
-  CFG_RESP_LONG=8,
-  CFG_PETSCIIMODE=9,
-  CFG_DCDMODE=10,
-  CFG_UART=11,
-  CFG_CTSMODE=12,
-  CFG_RTSMODE=13,
-  CFG_DCDPIN=14,
-  CFG_CTSPIN=15,
-  CFG_RTSPIN=16,
-  CFG_S0_RINGS=17,
-  CFG_S41_STREAM=18,
-  CFG_S60_LISTEN=19,
-  CFG_RIMODE=20,
-  CFG_DTRMODE=21,
-  CFG_DSRMODE=22,
-  CFG_RIPIN=23,
-  CFG_DTRPIN=24,
-  CFG_DSRPIN=25,
-  CFG_TIMEZONE=26,
-  CFG_TIMEFMT=27,
-  CFG_TIMEURL=28,
-  CFG_HOSTNAME=29,
-  CFG_PRINTDELAYMS=30,
-  CFG_PRINTSPEC=31,
-  CFG_TERMTYPE=32,
-  CFG_LAST=32
+  CFG_WIFISSI = 0,
+  CFG_WIFIPW = 1,
+  CFG_BAUDRATE = 2,
+  CFG_EOLN = 3,
+  CFG_FLOWCONTROL = 4,
+  CFG_ECHO = 5,
+  CFG_RESP_SUPP = 6,
+  CFG_RESP_NUM = 7,
+  CFG_RESP_LONG = 8,
+  CFG_PETSCIIMODE = 9,
+  CFG_DCDMODE = 10,
+  CFG_UART = 11,
+  CFG_CTSMODE = 12,
+  CFG_RTSMODE = 13,
+  CFG_DCDPIN = 14,
+  CFG_CTSPIN = 15,
+  CFG_RTSPIN = 16,
+  CFG_S0_RINGS = 17,
+  CFG_S41_STREAM = 18,
+  CFG_S60_LISTEN = 19,
+  CFG_RIMODE = 20,
+  CFG_DTRMODE = 21,
+  CFG_DSRMODE = 22,
+  CFG_RIPIN = 23,
+  CFG_DTRPIN = 24,
+  CFG_DSRPIN = 25,
+  CFG_TIMEZONE = 26,
+  CFG_TIMEFMT = 27,
+  CFG_TIMEURL = 28,
+  CFG_HOSTNAME = 29,
+  CFG_PRINTDELAYMS = 30,
+  CFG_PRINTSPEC = 31,
+  CFG_TERMTYPE = 32,
+  CFG_LAST = 32
 };
 
 enum BinType
 {
-  BTYPE_NORMAL=0,
-  BTYPE_HEX=1,
-  BTYPE_DEC=2,
-  BTYPE_NORMAL_NOCHK=3,
-  BTYPE_INVALID=4
+  BTYPE_NORMAL = 0,
+  BTYPE_HEX = 1,
+  BTYPE_DEC = 2,
+  BTYPE_NORMAL_NOCHK = 3,
+  BTYPE_INVALID = 4
 };
 
 class ZCommand : public ZMode
 {
-  friend class WiFiClientNode;
-  friend class ZConfig;
-  friend class ZBrowser;
+    friend class WiFiClientNode;
+    friend class ZConfig;
+    friend class ZBrowser;
 
   private:
     char CRLF[4];
     char LFCR[4];
     char LF[2];
     char CR[2];
-    char BS=8;
+    char BS = 8;
     char ringCounter = 1;
 
     ZSerial serial;
@@ -94,11 +94,11 @@ class ZCommand : public ZMode
     BinType binType = BTYPE_NORMAL;
     uint8_t nbuf[MAX_COMMAND_SIZE];
     char hbuf[MAX_COMMAND_SIZE];
-    int eon=0;
+    int eon = 0;
     int lastServerClientId = 0;
     WiFiClientNode *current = null;
-    bool autoStreamMode=false;
-    bool preserveListeners=false;
+    bool autoStreamMode = false;
+    bool preserveListeners = false;
     unsigned long lastNonPlusTimeMs = 0;
     unsigned long currentExpiresTimeMs = 0;
     char *tempDelimiters = NULL;
@@ -110,7 +110,7 @@ class ZCommand : public ZMode
     char *machineState = NULL;
     String machineQue = "";
     String previousCommand = "";
-    WiFiClientNode *nextConn=null;
+    WiFiClientNode *nextConn = null;
     int lastPacketId = -1;
 
     byte CRC8(const byte *data, byte len);
@@ -160,7 +160,7 @@ class ZCommand : public ZMode
     bool longResponses;
     boolean doEcho;
     String EOLN;
-    char EC='+';
+    char EC = '+';
     char ECS[32];
 
     ZCommand();
@@ -171,5 +171,3 @@ class ZCommand : public ZMode
     void loop();
     void reset();
 };
-
-

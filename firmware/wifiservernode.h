@@ -49,4 +49,3 @@ class WiFiServerNode : public WiFiServerSpec
     static void SaveWiFiServers();
     static void RestoreWiFiServers();
 };
-

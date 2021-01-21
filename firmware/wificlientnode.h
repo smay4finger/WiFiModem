@@ -25,11 +25,11 @@
 static WiFiClient *createWiFiClient(bool SSL)
 {
 #ifdef ZIMODEM_ESP32
-  if(SSL)
+  if (SSL)
     return new WiFiClientSecure();
   else
 #endif
-  return new WiFiClient();
+    return new WiFiClient();
 }
 
 class WiFiClientNode : public Stream
@@ -40,16 +40,16 @@ class WiFiClientNode : public Stream
     void fillUnderflowBuf();
     WiFiClient client;
     WiFiClient *clientPtr;
-    bool answered=true;
-    int ringsRemain=0;
+    bool answered = true;
+    int ringsRemain = 0;
     unsigned long nextRingMillis = 0;
 
   public:
-    int id=0;
+    int id = 0;
     char *host;
     int port;
-    bool wasConnected=false;
-    bool serverClient=false;
+    bool wasConnected = false;
+    bool serverClient = false;
     int flagsBitmap = 0;
     char *delimiters = NULL;
     char *maskOuts = NULL;
@@ -58,7 +58,7 @@ class WiFiClientNode : public Stream
     String machineQue = "";
 
     uint8_t lastPacketBuf[LAST_PACKET_BUF_SIZE];
-    int lastPacketLen=0;
+    int lastPacketLen = 0;
     //uint8_t overflowBuf[OVERFLOW_BUF_SIZE];
     //int overflowBufLen = 0;
     uint8_t underflowBuf[UNDERFLOW_BUF_MAX_SIZE];
@@ -96,5 +96,3 @@ class WiFiClientNode : public Stream
 
     static int getNumOpenWiFiConnections();
 };
-
-

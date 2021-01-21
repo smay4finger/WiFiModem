@@ -16,18 +16,18 @@
 
 enum LogMode
 {
-  NADA=0,
-  SocketIn=1,
-  SocketOut=2,
-  SerialIn=3,
-  SerialOut=4
+  NADA = 0,
+  SocketIn = 1,
+  SocketOut = 2,
+  SerialIn = 3,
+  SerialOut = 4
 };
 
 static unsigned long expectedSerialTime = 1000;
 
 static bool logFileOpen = false;
-static bool logFileDebug= false;
-static File logFile; 
+static bool logFileDebug = false;
+static File logFile;
 
 static void logSerialOut(const uint8_t c);
 static void logSocketOut(const uint8_t c);
@@ -44,4 +44,3 @@ static char *TOHEX(unsigned long a);
 static char *tohex(uint8_t a);
 static char *TOHEX(uint8_t a);
 static uint8_t FROMHEX(uint8_t a1, uint8_t a2);
-

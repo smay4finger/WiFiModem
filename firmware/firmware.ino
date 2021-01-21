@@ -170,15 +170,15 @@ enum BaudState
   BS_SWITCH_NORMAL_NEXT
 };
 
-static bool wifiConnected =false;
+static bool wifiConnected = false;
 static String wifiSSI;
 static String wifiPW;
 static String hostname;
 static SerialConfig serialConfig = DEFAULT_SERIAL_CONFIG;
-static int baudRate=DEFAULT_BAUD_RATE;
-static int dequeSize=1+(DEFAULT_BAUD_RATE/INTERNAL_FLOW_CONTROL_DIV);
-static BaudState baudState = BS_NORMAL; 
-static unsigned long resetPushTimer=0;
+static int baudRate = DEFAULT_BAUD_RATE;
+static int dequeSize = 1 + (DEFAULT_BAUD_RATE / INTERNAL_FLOW_CONTROL_DIV);
+static BaudState baudState = BS_NORMAL;
+static unsigned long resetPushTimer = 0;
 static int tempBaud = -1; // -1 do nothing
 static int dcdStatus = LOW;
 static int pinDCD = DEFAULT_PIN_DCD;
@@ -205,20 +205,20 @@ static int getDefaultCtsPin()
 #ifdef ZIMODEM_ESP32
   return DEFAULT_PIN_CTS;
 #else
-  if((ESP.getFlashChipRealSize()/1024)>=4096) // assume this is a striketerm/esp12e
+  if ((ESP.getFlashChipRealSize() / 1024) >= 4096) // assume this is a striketerm/esp12e
     return DEFAULT_PIN_CTS;
   else
     return 0;
-#endif 
+#endif
 }
 
-static void doNothing(const char* format, ...) 
+static void doNothing(const char* format, ...)
 {
 }
 
 static void s_pinWrite(uint8_t pinNo, uint8_t value)
 {
-  if(pinSupport[pinNo])
+  if (pinSupport[pinNo])
   {
     digitalWrite(pinNo, value);
   }
@@ -227,46 +227,46 @@ static void s_pinWrite(uint8_t pinNo, uint8_t value)
 static void setHostName(const char *hname)
 {
 #ifdef ZIMODEM_ESP32
-      tcpip_adapter_set_hostname(TCPIP_ADAPTER_IF_STA, hname);
+  tcpip_adapter_set_hostname(TCPIP_ADAPTER_IF_STA, hname);
 #else
-      WiFi.hostname(hname);
+  WiFi.hostname(hname);
 #endif
 }
 
 static bool connectWifi(const char* ssid, const char* password)
 {
-  while(WiFi.status() == WL_CONNECTED)
+  while (WiFi.status() == WL_CONNECTED)
   {
     WiFi.disconnect();
     delay(100);
     yield();
   }
 #ifndef ZIMODEM_ESP32
-  if(hostname.length() > 0)
+  if (hostname.length() > 0)
     setHostName(hostname.c_str());
 #endif
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  if(hostname.length() > 0)
+  if (hostname.length() > 0)
     setHostName(hostname.c_str());
-  bool amConnected = (WiFi.status() == WL_CONNECTED) && (strcmp(WiFi.localIP().toString().c_str(), "0.0.0.0")!=0);
+  bool amConnected = (WiFi.status() == WL_CONNECTED) && (strcmp(WiFi.localIP().toString().c_str(), "0.0.0.0") != 0);
   int WiFiCounter = 0;
   while ((!amConnected) && (WiFiCounter < 30))
   {
     WiFiCounter++;
-    if(!amConnected)
+    if (!amConnected)
       delay(500);
-    amConnected = (WiFi.status() == WL_CONNECTED) && (strcmp(WiFi.localIP().toString().c_str(), "0.0.0.0")!=0);
+    amConnected = (WiFi.status() == WL_CONNECTED) && (strcmp(WiFi.localIP().toString().c_str(), "0.0.0.0") != 0);
   }
   wifiConnected = amConnected;
-  if(!amConnected)
+  if (!amConnected)
     WiFi.disconnect();
   return wifiConnected;
 }
 
 static void checkBaudChange()
 {
-  switch(baudState)
+  switch (baudState)
   {
     case BS_SWITCH_TEMP_NEXT:
       changeBaudRate(tempBaud);
@@ -285,95 +285,95 @@ static void changeBaudRate(int baudRate)
 {
   flushSerial(); // blocking, but very very necessary
   delay(500); // give the client half a sec to catch up
-  logPrintfln("Baud change to %d.\n",baudRate);
-  debugPrintf("Baud change to %d.\n",baudRate);
-  dequeSize=1+(baudRate/INTERNAL_FLOW_CONTROL_DIV);
-  debugPrintf("Deque constant now: %d\n",dequeSize);
+  logPrintfln("Baud change to %d.\n", baudRate);
+  debugPrintf("Baud change to %d.\n", baudRate);
+  dequeSize = 1 + (baudRate / INTERNAL_FLOW_CONTROL_DIV);
+  debugPrintf("Deque constant now: %d\n", dequeSize);
 #ifdef ZIMODEM_ESP32
   HWSerial.changeBaudRate(baudRate);
 #else
   HWSerial.begin(baudRate, serialConfig);  //Change baud rate
-#endif  
+#endif
 }
 
 static void changeSerialConfig(SerialConfig conf)
 {
   flushSerial(); // blocking, but very very necessary
   delay(500); // give the client half a sec to catch up
-  debugPrintf("Config changing %d.\n",(int)conf);
-  dequeSize=1+(baudRate/INTERNAL_FLOW_CONTROL_DIV);
-  debugPrintf("Deque constant now: %d\n",dequeSize);
+  debugPrintf("Config changing %d.\n", (int)conf);
+  dequeSize = 1 + (baudRate / INTERNAL_FLOW_CONTROL_DIV);
+  debugPrintf("Deque constant now: %d\n", dequeSize);
 #ifdef ZIMODEM_ESP32
   HWSerial.changeConfig(conf);
 #else
   HWSerial.begin(baudRate, conf);  //Change baud rate
-#endif  
+#endif
   debugPrintf("Config changed.\n");
 }
 
 static int checkOpenConnections()
 {
-  int num=WiFiClientNode::getNumOpenWiFiConnections();
-  if(num == 0)
+  int num = WiFiClientNode::getNumOpenWiFiConnections();
+  if (num == 0)
   {
-    if((dcdStatus == dcdActive)
-    &&(dcdStatus != dcdInactive))
+    if ((dcdStatus == dcdActive)
+        && (dcdStatus != dcdInactive))
     {
       logPrintfln("DCD going inactive.\n");
       dcdStatus = dcdInactive;
-      s_pinWrite(pinDCD,dcdStatus);
-      if(baudState == BS_SWITCHED_TEMP)
+      s_pinWrite(pinDCD, dcdStatus);
+      if (baudState == BS_SWITCHED_TEMP)
         baudState = BS_SWITCH_NORMAL_NEXT;
-      if(currMode == &commandMode)
+      if (currMode == &commandMode)
         clearSerialOutBuffer();
     }
   }
   else
   {
-    if((dcdStatus == dcdInactive)
-    &&(dcdStatus != dcdActive))
+    if ((dcdStatus == dcdInactive)
+        && (dcdStatus != dcdActive))
     {
       logPrintfln("DCD going active.\n");
       dcdStatus = dcdActive;
-      s_pinWrite(pinDCD,dcdStatus);
-      if((tempBaud > 0) && (baudState == BS_NORMAL))
+      s_pinWrite(pinDCD, dcdStatus);
+      if ((tempBaud > 0) && (baudState == BS_NORMAL))
         baudState = BS_SWITCH_TEMP_NEXT;
     }
   }
   return num;
 }
 
-void setup() 
+void setup()
 {
-  for(int i=0;i<MAX_PIN_NO;i++)
-    pinSupport[i]=false;
+  for (int i = 0; i < MAX_PIN_NO; i++)
+    pinSupport[i] = false;
 #ifdef ZIMODEM_ESP32
   Serial.begin(115200); //the debug port
   Serial.setDebugOutput(true);
   debugPrintf("Debug port open and ready.\n");
-  for(int i=12;i<=23;i++)
-    pinSupport[i]=true;
-  for(int i=25;i<=27;i++)
-    pinSupport[i]=true;
-  for(int i=32;i<=33;i++)
-    pinSupport[i]=true;
-  pinSupport[36]=true;
-  pinSupport[39]=true;
+  for (int i = 12; i <= 23; i++)
+    pinSupport[i] = true;
+  for (int i = 25; i <= 27; i++)
+    pinSupport[i] = true;
+  for (int i = 32; i <= 33; i++)
+    pinSupport[i] = true;
+  pinSupport[36] = true;
+  pinSupport[39] = true;
 #else
-  pinSupport[0]=true;
-  pinSupport[2]=true;
-  if((ESP.getFlashChipRealSize()/1024)>=4096) // assume this is a strykelink/esp12e
+  pinSupport[0] = true;
+  pinSupport[2] = true;
+  if ((ESP.getFlashChipRealSize() / 1024) >= 4096) // assume this is a strykelink/esp12e
   {
-    pinSupport[4]=true;
-    pinSupport[5]=true;
-    for(int i=9;i<=15;i++)
-      pinSupport[i]=true;
-    pinSupport[11]=false;
+    pinSupport[4] = true;
+    pinSupport[5] = true;
+    for (int i = 9; i <= 15; i++)
+      pinSupport[i] = true;
+    pinSupport[11] = false;
   }
-#endif    
+#endif
   initSDShell();
   currMode = &commandMode;
-  if(!SPIFFS.begin())
+  if (!SPIFFS.begin())
   {
     SPIFFS.format();
     SPIFFS.begin();
@@ -386,60 +386,58 @@ void setup()
   commandMode.loadConfig();
   PhoneBookEntry::loadPhonebook();
   dcdStatus = dcdInactive;
-  s_pinWrite(pinDCD,dcdStatus);
+  s_pinWrite(pinDCD, dcdStatus);
   flushSerial();
 }
 
 void checkFactoryReset()
 {
 #ifdef ZIMODEM_ESP32
-    if(!digitalRead(PIN_FACTORY_RESET))
+  if (!digitalRead(PIN_FACTORY_RESET))
+  {
+    if (resetPushTimer != 1)
     {
-      if(resetPushTimer != 1)
+      if (resetPushTimer == 0)
       {
-        if(resetPushTimer==0)
-        {
-          resetPushTimer=millis();
-          if(resetPushTimer==1)
-            resetPushTimer++;
-        }
-        else
-        if((millis() - resetPushTimer) > 5000)
-        {
-          SPIFFS.remove("/zconfig.txt");
-          SPIFFS.remove("/zphonebook.txt");
-          SPIFFS.remove("/zlisteners.txt");
-          PhoneBookEntry::clearPhonebook();
-          SPIFFS.end();
-          SPIFFS.format();
-          SPIFFS.begin();
-          PhoneBookEntry::clearPhonebook();
-          if(WiFi.status() == WL_CONNECTED)
-            WiFi.disconnect();
-          baudRate = DEFAULT_BAUD_RATE;
-          commandMode.loadConfig();
-          PhoneBookEntry::loadPhonebook();
-          dcdStatus = dcdInactive;
-          s_pinWrite(pinDCD,dcdStatus);
-          wifiSSI="";
-          wifiConnected=false;
-          delay(500);
-          zclock.reset();
-          commandMode.reset();
-          resetPushTimer=1;
-        }
+        resetPushTimer = millis();
+        if (resetPushTimer == 1)
+          resetPushTimer++;
+      }
+      else if ((millis() - resetPushTimer) > 5000)
+      {
+        SPIFFS.remove("/zconfig.txt");
+        SPIFFS.remove("/zphonebook.txt");
+        SPIFFS.remove("/zlisteners.txt");
+        PhoneBookEntry::clearPhonebook();
+        SPIFFS.end();
+        SPIFFS.format();
+        SPIFFS.begin();
+        PhoneBookEntry::clearPhonebook();
+        if (WiFi.status() == WL_CONNECTED)
+          WiFi.disconnect();
+        baudRate = DEFAULT_BAUD_RATE;
+        commandMode.loadConfig();
+        PhoneBookEntry::loadPhonebook();
+        dcdStatus = dcdInactive;
+        s_pinWrite(pinDCD, dcdStatus);
+        wifiSSI = "";
+        wifiConnected = false;
+        delay(500);
+        zclock.reset();
+        commandMode.reset();
+        resetPushTimer = 1;
       }
     }
-    else
-    if(resetPushTimer != 0)
-      resetPushTimer=0;
+  }
+  else if (resetPushTimer != 0)
+    resetPushTimer = 0;
 #endif
 }
 
-void loop() 
+void loop()
 {
   checkFactoryReset();
-  if(HWSerial.available())
+  if (HWSerial.available())
   {
     currMode->serialIncoming();
   }

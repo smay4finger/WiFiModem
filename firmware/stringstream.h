@@ -3,7 +3,7 @@
 
 class StringStream : public Stream
 {
-public:
+  public:
     StringStream(const String &s)
     {
       str = s;
@@ -11,14 +11,23 @@ public:
     }
 
     // Stream methods
-    virtual int available() { return str.length() - position; }
-    virtual int read() { return position < str.length() ? str[position++] : -1; }
-    virtual int peek() { return position < str.length() ? str[position] : -1; }
+    virtual int available() {
+      return str.length() - position;
+    }
+    virtual int read() {
+      return position < str.length() ? str[position++] : -1;
+    }
+    virtual int peek() {
+      return position < str.length() ? str[position] : -1;
+    }
     virtual void flush() { };
     // Print methods
-    virtual size_t write(uint8_t c) { str += (char)c; return 1;};
+    virtual size_t write(uint8_t c) {
+      str += (char)c;
+      return 1;
+    };
 
-private:
+  private:
     String str;
     int length;
     int position;

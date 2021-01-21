@@ -20,9 +20,9 @@ class ZBrowser : public ZMode
   private:
     enum ZBrowseState
     {
-      ZBROW_MAIN=0,
+      ZBROW_MAIN = 0,
     } currState;
-    
+
     ZSerial serial;
 
     void switchBackToCommandMode();
@@ -40,10 +40,10 @@ class ZBrowser : public ZMode
     void deleteFile(String fname, String mask, bool recurse);
     void showDirectory(String path, String mask, String prefix, bool recurse);
     void copyFiles(String source, String mask, String target, bool recurse, bool overwrite);
-    
+
     bool showMenu;
     bool savedEcho;
-    String path="/";
+    String path = "/";
     String EOLN;
     char EOLNC[5];
     unsigned long lastNumber;
