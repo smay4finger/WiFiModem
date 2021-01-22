@@ -3,3 +3,7 @@ hardware/*.?#?
 
 # build files by Arduino
 firmware/build
+.arduino15
+
+# tempfiles
+.*.swp
